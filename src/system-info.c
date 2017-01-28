@@ -28,13 +28,14 @@
 #include <libglip.h>
 #include <assert.h>
 
-const struct module_types module_lookup[6] = {
+const struct module_types module_lookup[7] = {
         { .name = "HOST" },
         { .name = "SCM" },
         { .name = "DEM-UART" },
         { .name = "MAM" },
         { .name = "STM" },
-        { .name = "CTM" }
+        { .name = "CTM" },
+        { .name = "CDM" }
 };
 
 const uint16_t scmid = 0x1;
@@ -46,10 +47,9 @@ int osd_system_enumerate(struct osd_context *ctx) {
     if (mod1_id != 0x1) {
         return OSD_E_CANNOTENUMERATE;
     }
-
+   
     osd_reg_read16(ctx, scmid, 0x201, &mod_num);
     mod_num += 1;
-
     size_t size = sizeof(struct osd_system_info);
     size += sizeof(struct osd_module_info) * mod_num;
 
@@ -117,6 +117,13 @@ int osd_system_enumerate(struct osd_context *ctx) {
 
             osd_reg_read16(ctx, mod->addr, 0x200, &ctm->addr_width);
             osd_reg_read16(ctx, mod->addr, 0x200, &ctm->data_width);
+        } else if (mod->type == OSD_MOD_CDM) {
+            struct osd_cdm_descriptor *cdm;
+            cdm = calloc(1, sizeof(struct osd_cdm_descriptor));
+            mod->descriptor.cdm = cdm;
+
+            osd_reg_read16(ctx, mod->addr, 0x200, &cdm->addr_width);
+            osd_reg_read16(ctx, mod->addr, 0x200, &cdm->data_width);
         }
 
         osd_reg_read16(ctx, mod->addr, 1, &mod->version);
@@ -238,6 +245,7 @@ int osd_print_module_info(struct osd_context *ctx, uint16_t id,
     struct osd_memory_descriptor *mem;
     struct osd_stm_descriptor *stm;
     struct osd_ctm_descriptor *ctm;
+    struct osd_cdm_descriptor *cdm;
     switch (mod->type) {
         case OSD_MOD_STM:
             stm = mod->descriptor.stm;
@@ -259,6 +267,11 @@ int osd_print_module_info(struct osd_context *ctx, uint16_t id,
                         r, mem->regions[r].base_addr);
                 fprintf(fh, "memory size: %ld Bytes\n", mem->regions[r].size);
             }
+            break;
+        case OSD_MOD_CDM:
+            cdm = mod->descriptor.cdm;
+            fprintf(fh, "%saddr width: %d\n", indentstring, cdm->addr_width);
+            fprintf(fh, "%sdata width: %d\n", indentstring, cdm->data_width);
             break;
         default:
             break;

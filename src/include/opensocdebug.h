@@ -67,7 +67,8 @@ enum osd_module_types {
     OSD_MOD_DEM_UART = 2,
     OSD_MOD_MAM = 3,
     OSD_MOD_STM = 4,
-    OSD_MOD_CTM = 5
+    OSD_MOD_CTM = 5,
+    OSD_MOD_CDM = 6
 };
 
 struct osd_memory_descriptor {
@@ -85,6 +86,11 @@ struct osd_stm_descriptor {
 };
 
 struct osd_ctm_descriptor {
+  uint16_t addr_width;
+  uint16_t data_width;
+};
+
+struct osd_cdm_descriptor {
   uint16_t addr_width;
   uint16_t data_width;
 };
@@ -111,6 +117,10 @@ int osd_reg_read16(struct osd_context *ctx, uint16_t mod,
                    uint16_t addr, uint16_t *value);
 int osd_reg_write16(struct osd_context *ctx, uint16_t mod,
                     uint16_t addr, uint16_t value);
+int osd_reg_read32(struct osd_context *ctx, uint16_t mod,
+                   uint16_t addr, uint16_t *value);
+int osd_reg_write32(struct osd_context *ctx, uint16_t mod,
+                    uint16_t addr, uint16_t *value);
 
 int osd_get_system_identifier(struct osd_context *ctx, uint16_t *id);
 size_t osd_get_max_pkt_len(struct osd_context *ctx);

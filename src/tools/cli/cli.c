@@ -203,6 +203,16 @@ static int interpret(struct osd_context *ctx, char *line) {
         } else {
             PRINT_HELP(ctm);
         }
+    } else if (CHECK_MATCH(cmd, "cdm")) {
+        uint16_t value[2];
+        value[0] = 0x1;
+        value[1] = 0x0;
+        uint16_t addr = (0x8000 | (0x6 << 11)) + 20;
+        osd_reg_write32(ctx, 5, addr, value);
+        printf("Wrote: %i, %i", value[0], value[1]);
+        uint16_t rvalue[2];
+        osd_reg_read32(ctx, 5, addr, rvalue);
+        printf("Read: %i, %i", rvalue[0], rvalue[1]);
     } else if (CHECK_MATCH(cmd, "terminal")) {
         char *subcmd = strtok(NULL, " ");
 

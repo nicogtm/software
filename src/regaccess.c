@@ -80,3 +80,42 @@ int osd_reg_write16(struct osd_context *ctx, uint16_t mod,
 
     return OSD_SUCCESS;
 }
+
+OSD_EXPORT
+int osd_reg_read32(struct osd_context *ctx, uint16_t mod,
+                   uint16_t addr, uint16_t value[2]) {
+
+    uint16_t packet[5];
+    size_t size = 1;
+
+    packet[0] = size;
+    packet[1] = mod & 0x3ff;
+    packet[2] = (REG_READ32 << 10);
+    packet[3] = addr;
+
+    osd_reg_access(ctx, packet);
+    assert(packet[0] == 1);
+
+    value[1] = packet[3];
+    value[0] = packet[4];
+
+    return OSD_SUCCESS;
+}
+
+OSD_EXPORT
+int osd_reg_write32(struct osd_context *ctx, uint16_t mod,
+                    uint16_t addr, uint16_t *value) {
+    uint16_t packet[6];
+    size_t size = 5;
+
+    packet[0] = size;
+    packet[1] = mod & 0x3ff;
+    packet[2] = (REG_WRITE32 << 10);
+    packet[3] = addr;
+    packet[4] = value[1];
+    packet[5] = value[0];
+
+    osd_reg_access(ctx, packet);
+
+    return OSD_SUCCESS;
+}

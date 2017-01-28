@@ -47,6 +47,7 @@ struct osd_module_info {
         struct osd_memory_descriptor *memory;
         struct osd_stm_descriptor *stm;
         struct osd_ctm_descriptor *ctm;
+        struct osd_cdm_descriptor *cdm;
     } descriptor;
 };
 
@@ -129,7 +130,7 @@ static const uint16_t modules_max_id = 4;
 struct module_types {
     const char *name;
 };
-extern const struct module_types module_lookup[6];
+extern const struct module_types module_lookup[7];
 
 struct module_callback {
     osd_incoming_handler call;
