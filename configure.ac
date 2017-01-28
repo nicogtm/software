@@ -59,12 +59,9 @@ AC_ARG_ENABLE([python-bindings],
 AM_CONDITIONAL([HAVE_SWIG], [test "$SWIG"])
 AS_IF([test "x$enable_python" = "xyes"], [
     AC_CHECK_PROG([SWIG], [swig], yes)
-    AS_IF([test "x$SWIG" != "xyes"],[AC_MSG_ERROR([Unable to find swig. Needed for python bindings.])])
-    AM_PATH_PYTHON()
-    PYTHON_LIBS=`python-config --libs`
-    PYTHON_INCLUDES=`python-config --includes`
-    AC_SUBST(PYTHON_LIBS)
-    AC_SUBST(PYTHON_INCLUDES)
+    AS_IF([test "x$SWIG" != "xyes"],
+          [AC_MSG_ERROR([Unable to find swig. Needed for python bindings.])])
+    AM_PATH_PYTHON2([2.5.0])
     AC_DEFINE(ENABLE_PYTHON, [1], [Define to use python bindings])
 ])
 AM_CONDITIONAL([ENABLE_PYTHON], [test "x$enable_python" != "xno"])
@@ -98,6 +95,7 @@ AC_CONFIG_FILES([
         src/tools/daemon/Makefile
         src/tools/osd_term/Makefile
         src/tools/cli/Makefile
+        src/tools/gdbserver/Makefile
         src/bindings/Makefile
         src/bindings/python/Makefile
         src/bindings/python/setup.py
